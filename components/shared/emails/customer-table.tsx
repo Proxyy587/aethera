@@ -1,49 +1,47 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DataTable } from "@/components/widgets/table";
 import { EMAIL_MARKETING_HEADER } from "@/constants";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
-import { SideSheet } from "@/components/widgets/sidesheet";
+import { useUser } from "@clerk/nextjs";
+import { format } from "timeago.js";
+import useSubscribersData from "@/hooks/use-subscriber-data";
+
+
 
 export const CustomerTable = () => {
-	const customers = [
-		{
-			id: "customer1",
-			email: "customer1@example.com",
-			domain: "example.com",
-		},
-		{
-			id: "customer2",
-			email: "customer2@example.com",
-			domain: "example.com",
-		},
-		{
-			id: "customer3",
-			email: "customer3@example.com",
-			domain: "anotherexample.com",
-		},
-	];
+	const {data,loading} = useSubscribersData();
+	
 
-	const selectedCustomers = ["customer1@example.com", "customer3@example.com"];
+	const rows: any = [];
+
+	  data?.forEach((i: any) => {
+    rows.push({
+        id: i?._id,
+        email: i?.email,
+        createdAt: format(i?.createdAt),
+        source: i?.source,
+        status: i?.status,
+    })
+  })
 
 	return (
 		<DataTable headers={EMAIL_MARKETING_HEADER}>
-			{customers.map((customer) => (
-				<TableRow key={customer.id}>
+			{rows.map((subscriber: any) => (
+				<TableRow key={subscriber._id}>
 					<TableCell>
 						<Card
 							className={cn(
 								"rounded-full w-5 h-5 border-4 cursor-pointer",
-								selectedCustomers.includes(customer.email)
-									? "bg-orange"
-									: "bg-peach"
+								subscriber.status === "subscribed" ? "bg-orange" : "bg-peach"
 							)}
 						/>
 					</TableCell>
-					<TableCell>{customer.email}</TableCell>
-					<TableCell className="text-right">{customer.domain}</TableCell>
+					<TableCell>{subscriber.email}</TableCell>
+					<TableCell>{subscriber.email.split('@')[1]}</TableCell>
+					<TableCell className="justify-end flex">{subscriber.status}</TableCell>
 				</TableRow>
 			))}
 		</DataTable>

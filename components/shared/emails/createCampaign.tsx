@@ -97,7 +97,6 @@ export default function CreateCampaign() {
         title: "Success",
         description: result.message,
       });
-      // Refresh the campaign list
       const updatedCampaigns = campaigns.filter(campaign => campaign._id !== campaignId);
       setCampaigns(updatedCampaigns);
     } else if (result.error) {

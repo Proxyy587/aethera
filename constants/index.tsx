@@ -45,7 +45,7 @@ export const pricingCards = [
 	},
 ];
 
-export const EMAIL_MARKETING_HEADER = ["Id", "Email", "Domain"];
+export const EMAIL_MARKETING_HEADER = ["Id", "Email", "Domain", "Status"];
 
 export const dashboardSidebar = [
 	{ href: "/dashboard", label: "Dashboard", icon: Home },

@@ -71,35 +71,51 @@ const Emaileditor = () => {
 	};
 
 	const saveDraft = async () => {
-		setLoading(true);
 		let content = "";
-		if (editorType === "unlayer") {
-			const unlayer = emailEditorRef.current?.editor;
-			unlayer?.exportHtml(async (data) => {
-				const { design } = data;
-				content = JSON.stringify(design);
-				await saveToDatabase(content);
-			});
-		} else {
-			content = htmlContent;
+		try {
+			if (editorType === "unlayer") {
+				const unlayer = emailEditorRef.current?.editor;
+				if (unlayer) {
+					await new Promise<void>((resolve) => {
+						unlayer.exportHtml((data) => {
+							const { design } = data;
+							content = JSON.stringify(design);
+							resolve();
+						});
+					});
+				} else {
+					throw new Error("Unlayer editor not initialized");
+				}
+			} else {
+				content = htmlContent;
+			}
 			await saveToDatabase(content);
+		} catch (error) {
+			console.error("Error saving draft:", error);
+			toast({ title: "Error", description: "Failed to save draft", variant: "destructive" });
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const saveToDatabase = async (content: string) => {
-		const result = await saveCampaign({
-			id: campaignId,
-			title: subject,
-			content,
-			editorType,
-			newsLetterOwnerId: user?.id || "",
-		});
-		setLoading(false);
-		if (result.success) {
-			toast({ title: "Success", description: result.message });
-			if (!campaignId) setCampaignId(result.id);
-		} else {
-			toast({ title: "Error", description: result.message, variant: "destructive" });
+		try {
+			const result = await saveCampaign({
+				id: campaignId,
+				title: subject,
+				content,
+				editorType,
+				newsLetterOwnerId: user?.id || "",
+			});
+			if (result.success) {
+				toast({ title: "Success", description: result.message });
+				if (!campaignId) setCampaignId(result.id);
+			} else {
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			console.error("Error saving to database:", error);
+			toast({ title: "Error", description: "Failed to save to database", variant: "destructive" });
 		}
 	};
 

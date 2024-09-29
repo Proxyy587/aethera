@@ -7,12 +7,26 @@ import CTA from "@/components/shared/newsletterSlug/CTA";
 import Form from "@/components/forms/newsLetterSlug";
 import NewsletterFooter from "@/components/shared/newsletterSlug/newsletterFooter";
 import Particles from "@/components/magicui/particles";
+import { addSubscriber } from "@/actions/add.subscriber";
 
-export default function NewsletterHome() {
+interface NewsletterHomeProps {
+	id: string;
+	username: string;
+	firstName: string;
+	lastName: string;
+}
+
+export default function NewsletterHome({
+	id,
+	username,
+	firstName,
+	lastName,
+}: NewsletterHomeProps) {
 	const [name, setName] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(false);
 
+	// Event handlers
 	const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(event.target.value);
 	};
@@ -27,84 +41,36 @@ export default function NewsletterHome() {
 	};
 
 	const handleSubmit = async () => {
-		if (!name || !email) {
-			toast.error("Please fill in all fields 😠");
-			return;
-		}
-
-		if (!isValidEmail(email)) {
-			toast.error("Please enter a valid email address 😠");
-			return;
-		}
-
-		setLoading(true);
-
-		const promise = new Promise(async (resolve, reject) => {
-			try {
-				// First, attempt to send the email
-				const mailResponse = await fetch("/api/mail", {
-					cache: "no-store",
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ firstname: name, email }),
-				});
-
-				if (!mailResponse.ok) {
-					if (mailResponse.status === 429) {
-						reject("Rate limited");
-					} else {
-						reject("Email sending failed");
-					}
-					return; // Exit the promise early if mail sending fails
-				}
-
-				// If email sending is successful, proceed to insert into Notion
-				const notionResponse = await fetch("/api/notion", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ name, email }),
-				});
-
-				if (!notionResponse.ok) {
-					if (notionResponse.status === 429) {
-						reject("Rate limited");
-					} else {
-						reject("Notion insertion failed");
-					}
-				} else {
-					resolve({ name });
-				}
-			} catch (error) {
-				reject(error);
+		try {
+			if (!name || !email) {
+				toast.error("Please fill in all fields 😠");
+				return;
 			}
-		});
 
-		toast.promise(promise, {
-			loading: "Getting you on the waitlist... 🚀",
-			success: (data) => {
-				setName("");
-				setEmail("");
-				return "Thank you for joining the waitlist 🎉";
-			},
-			error: (error) => {
-				if (error === "Rate limited") {
-					return "You're doing that too much. Please try again later";
-				} else if (error === "Email sending failed") {
-					return "Failed to send email. Please try again 😢.";
-				} else if (error === "Notion insertion failed") {
-					return "Failed to save your details. Please try again 😢.";
-				}
-				return "An error occurred. Please try again 😢.";
-			},
-		});
+			if (!isValidEmail(email)) {
+				toast.error("Please enter a valid email address 😠");
+				return;
+			}
 
-		promise.finally(() => {
-			setLoading(false);
-		});
+			setLoading(true);
+
+			await addSubscriber(name, email, id)
+				.then((res) => {
+					setLoading(false);
+					if (res.error) {
+						toast.error(res.error);
+					} else {
+						toast.success("You are successfully subscribed!");
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+					setLoading(false);
+				});
+		} catch (error) {
+			console.log(error);
+			toast.error("An error occurred. Please try again 😢.");
+		}
 	};
 
 	return (
@@ -112,7 +78,8 @@ export default function NewsletterHome() {
 			<section className="flex flex-col items-center px-4 sm:px-6 lg:px-8">
 				<Header />
 
-				<CTA />
+				{/* Pass the firstName, lastName, and username to CTA */}
+				<CTA username={username} firstName={firstName} lastName={lastName} />
 
 				<Form
 					name={name}
@@ -122,8 +89,6 @@ export default function NewsletterHome() {
 					handleSubmit={handleSubmit}
 					loading={loading}
 				/>
-
-				{/* <Logos /> */}
 			</section>
 
 			<NewsletterFooter />
