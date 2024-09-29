@@ -2,20 +2,28 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-const emailSchema = new Schema(
+const campaignSchema = new Schema(
 	{
 		title: {
 			type: String,
+			required: true,
 		},
 		content: {
 			type: String,
+			required: true,
+		},
+		editorType: {
+			type: String,
+			enum: ['visual', 'unlayer', 'html'],
+			required: true,
 		},
 		newsLetterOwnerId: {
 			type: String,
+			required: true,
 		},
 	},
 	{ timestamps: true }
 );
 
-const Email = mongoose.models.Emails || mongoose.model("Emails", emailSchema);
-export default Email;
+const Campaign = mongoose.models.Campaigns || mongoose.model("Campaigns", campaignSchema);
+export default Campaign;

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-// Type declaration for style objects
 interface ComponentStyle {
   [key: string]: string | number;
 }
@@ -10,6 +9,8 @@ interface ComponentProps {
   type: string;
   styles: ComponentStyle;
   content?: string | null;
+  href?: string | null;
+  targetBlank?: boolean;
   src?: string | null;
   alt?: string | null;
 }
@@ -22,31 +23,29 @@ interface PreviewWindowProps {
   duplicateComponent: (id: number) => void;
 }
 
-// PreviewWindow Component
 const PreviewWindow = ({
   components,
   setSelectedComponent,
-  updateComponent,  // Ensure these three props are defined
-  deleteComponent,  // ...
-  duplicateComponent,  // ...
+  updateComponent,
+  deleteComponent,
+  duplicateComponent,
 }: PreviewWindowProps) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  // Handle clicking on a component to select it
   const handleComponentClick = (component: ComponentProps) => {
-    setSelectedId(component.id); // Set the selected component's ID
-    setSelectedComponent(component); // Update the selected component state in the CustomEditor
+    setSelectedId(component.id);
+    setSelectedComponent(component);
   };
 
-  // Function to render each component type & apply selection functionality
   const renderComponentJsx = (component: ComponentProps) => {
-    // Add a border if the component is selected
     const isSelected = component.id === selectedId;
 
     const selectedStyle: React.CSSProperties = {
-      border: isSelected ? "2px solid blue" : "none", // Highlight selected component
+      border: isSelected ? "2px solid blue" : "none",
       padding: "4px",
       margin: "8px 0",
+      display: "flex",
+      justifyContent: (component.styles.justifyContent as React.CSSProperties['justifyContent']) || "center",
     };
 
     const onClickHandler = () => handleComponentClick(component);
@@ -76,10 +75,17 @@ const PreviewWindow = ({
         return (
           <div 
             key={component.id}
-            style={selectedStyle} 
+            style={selectedStyle}
             onClick={onClickHandler}
           >
-            <button style={component.styles}>{component.content}</button>
+            <a 
+              href={component.href || "#"} 
+              target={component.targetBlank ? "_blank" : "_self"}
+              rel={component.targetBlank ? "noopener noreferrer" : undefined}
+              style={component.styles}
+            >
+              {component.content}
+            </a>
           </div>
         );
       case "Divider":
@@ -101,7 +107,7 @@ const PreviewWindow = ({
           >
             <img
               src={component.src || "https://via.placeholder.com/150"}
-              alt={component.alt || "image"}
+              alt={component.alt || "picture"}
               style={component.styles}
             />
           </div>
@@ -116,7 +122,7 @@ const PreviewWindow = ({
       {components.length > 0 ? (
         components.map((component: ComponentProps) => renderComponentJsx(component))
       ) : (
-        <p>No components added yet</p>
+        <p className="text-center text-muted-foreground">Click on the components to see the preview</p>
       )}
     </div>
   );

@@ -22,7 +22,7 @@ interface ComponentProperties {
   width?: number | null;
 }
 
-export default function CustomEditor({ onHtmlChange }: { onHtmlChange: (html: string) => void }) {
+export default function CustomEditor({ onHtmlChange, initialHtml }: { onHtmlChange: (html: string) => void, initialHtml?: string }) {
   // Declare state
   const [components, setComponents] = useState<ComponentProperties[]>([]);
   const [device, setDevice] = useState<DeviceMode>("desktop");
@@ -61,13 +61,11 @@ export default function CustomEditor({ onHtmlChange }: { onHtmlChange: (html: st
     []
   );
 
-  // Function to delete a component by its id
   const deleteComponent = (id: number) => {
     setComponents((prevComponents) => prevComponents.filter((component) => component.id !== id));
     setSelectedComponent(null);
   };
 
-  // Function to duplicate a component by its id
   const duplicateComponent = (id: number) => {
     const componentToDuplicate = components.find((component) => component.id === id);
     if (componentToDuplicate) {
@@ -76,14 +74,12 @@ export default function CustomEditor({ onHtmlChange }: { onHtmlChange: (html: st
     }
   };
 
-  // Helper function to create the styles for inline CSS in the HTML
   const getStyleString = (styles: any) => {
     return Object.entries(styles)
       .map(([key, value]) => `${key.replace(/([A-Z])/g, "-$1").toLowerCase()}: ${value}`)
       .join(";");
   };
 
-  // Aggregates the components into a final HTML template
   const getEditorContent = useCallback(() => {
     const htmlContent = components
       .map((component) => {
@@ -124,6 +120,50 @@ export default function CustomEditor({ onHtmlChange }: { onHtmlChange: (html: st
     const newHtmlContent = getEditorContent();
     onHtmlChange(newHtmlContent);
   }, [components, getEditorContent, onHtmlChange]);
+
+  useEffect(() => {
+    if (initialHtml) {
+      // Parse the initial HTML and set the components
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(initialHtml, 'text/html');
+      const body = doc.body;
+      
+      const newComponents: ComponentProperties[] = [];
+      body.childNodes.forEach((node, index) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as Element;
+          const component: ComponentProperties = {
+            id: Date.now() + index,
+            type: element.tagName,
+            styles: {},
+            content: element.textContent || '',
+          };
+          
+          if (element.tagName === 'IMG') {
+            component.src = element.getAttribute('src') || '';
+            component.alt = element.getAttribute('alt') || '';
+          }
+          
+          // Parse inline styles
+          const styleAttr = element.getAttribute('style');
+          if (styleAttr) {
+            const styles = styleAttr.split(';').reduce((acc, style) => {
+              const [key, value] = style.split(':').map(s => s.trim());
+              if (key && value) {
+                acc[key] = value;
+              }
+              return acc;
+            }, {} as Record<string, string>);
+            component.styles = styles;
+          }
+          
+          newComponents.push(component);
+        }
+      });
+      
+      setComponents(newComponents);
+    }
+  }, [initialHtml]);
 
   return (
     <div className="h-screen p-4 flex bg-gray-100">

@@ -1,50 +1,86 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import Email from "@/lib/schema/marketing.schema";
+import Campaign from "@/lib/schema/marketing.schema";
 
-export async function saveEmail({
+export async function saveCampaign({
+	id,
 	title,
 	content,
+	editorType,
 	newsLetterOwnerId,
 }: {
+	id?: string | null;
 	title: string;
 	content: string;
+	editorType: string;
 	newsLetterOwnerId: string;
 }) {
 	try {
 		await connectToDB();
 
-		const email = await Email.findOne({
-			title,
-			newsLetterOwnerId,
-		});
-
-		if (email) {
-			await Email.findByIdAndUpdate(email._id, {
+		if (id) {
+			await Campaign.findByIdAndUpdate(id, {
 				title,
 				content,
+				editorType,
 			});
 			return {
 				success: true,
-				message: "Email updated successfully",
+				message: "Campaign updated successfully",
+				id,
 			};
 		} else {
-			await Email.create({
+			const newCampaign = await Campaign.create({
 				title,
 				content,
+				editorType,
 				newsLetterOwnerId,
 			});
 			return {
 				success: true,
-				message: "Email created successfully",
+				message: "Campaign created successfully",
+				id: newCampaign._id,
 			};
 		}
 	} catch (error) {
 		console.log(error);
 		return {
 			success: false,
-			message: "Error creating email",
+			message: "Error saving campaign",
 		};
+	}
+}
+
+export async function getCampaigns(newsLetterOwnerId: string) {
+	try {
+		await connectToDB();
+		const campaigns = await Campaign.find({ newsLetterOwnerId }).sort({ createdAt: -1 });
+		return campaigns;
+	} catch (error) {
+		console.log(error);
+		return [];
+	}
+}
+
+export async function getCampaign(id: string) {
+	try {
+		await connectToDB();
+		const campaign = await Campaign.findById(id);
+		if (campaign) {
+			return {
+				id: campaign._id.toString(),
+				title: campaign.title,
+				content: campaign.content,
+				editorType: campaign.editorType,
+				newsLetterOwnerId: campaign.newsLetterOwnerId,
+				createdAt: campaign.createdAt.toISOString(),
+				updatedAt: campaign.updatedAt.toISOString(),
+			};
+		}
+		return null;
+	} catch (error) {
+		console.log(error);
+		return null;
 	}
 }
