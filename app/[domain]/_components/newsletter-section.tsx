@@ -26,7 +26,6 @@ export default function NewsletterHome({
 	const [email, setEmail] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(false);
 
-	// Event handlers
 	const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(event.target.value);
 	};
@@ -54,22 +53,33 @@ export default function NewsletterHome({
 
 			setLoading(true);
 
-			await addSubscriber(name, email, id)
-				.then((res) => {
-					setLoading(false);
-					if (res.error) {
-						toast.error(res.error);
-					} else {
-						toast.success("You are successfully subscribed!");
-					}
-				})
-				.catch((error) => {
-					console.log(error);
-					setLoading(false);
-				});
+			console.log("Attempting to add subscriber:", { name, email, username });
+
+			const result = await addSubscriber(name, email, username);
+			
+			console.log("Result from addSubscriber:", result);
+
+			setLoading(false);
+
+			if (result.success) {
+				toast.success(result.message);
+				setName("");
+				setEmail("");
+			} else if (result.error) {
+				console.error("Error:", result.error);
+				toast.error(result.error);
+			} else {
+				console.error("Unknown error:", result);
+				toast.error("There was a problem saving the data. Please try again.");
+			}
 		} catch (error) {
-			console.log(error);
-			toast.error("An error occurred. Please try again 😢.");
+			console.error("Error adding subscriber:", error);
+			setLoading(false);
+			if (error instanceof Error) {
+				toast.error(`An error occurred: ${error.message}`);
+			} else {
+				toast.error("An unexpected error occurred. Please try again.");
+			}
 		}
 	};
 
@@ -78,7 +88,6 @@ export default function NewsletterHome({
 			<section className="flex flex-col items-center px-4 sm:px-6 lg:px-8">
 				<Header />
 
-				{/* Pass the firstName, lastName, and username to CTA */}
 				<CTA username={username} firstName={firstName} lastName={lastName} />
 
 				<Form

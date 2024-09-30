@@ -17,18 +17,20 @@ export const addSubscriber = async (name: string, email: string, username: strin
 
     const isExist = await Subscriber.findOne({ email, newsLetterOwnerId: username });
     if (isExist) {
-      return isExist;
+      return { success: true, message: "Already subscribed" };
     }
 
     const subscriber = await Subscriber.create({  
       name,
       email,
-      newsLetterOwnerId: newsletterOwner?.id,
+      newsLetterOwnerId: username,
       source: "aethera website",
       status: "subscribed",
     });
 
-    return subscriber;
+    const plainSubscriber = JSON.parse(JSON.stringify(subscriber));
+
+    return { success: true, message: "Subscription successful", subscriber: plainSubscriber };
   } catch (error) {
     console.error(error);
     return { error: "An error occurred while subscribing." };

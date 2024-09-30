@@ -1,36 +1,29 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DataTable } from "@/components/widgets/table";
 import { EMAIL_MARKETING_HEADER } from "@/constants";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
-import { useUser } from "@clerk/nextjs";
 import { format } from "timeago.js";
-import useSubscribersData from "@/hooks/use-subscriber-data";
 
+interface CustomerTableProps {
+  data: any[];
+}
 
-
-export const CustomerTable = () => {
-	const {data,loading} = useSubscribersData();
-	
-
-	const rows: any = [];
-
-	  data?.forEach((i: any) => {
-    rows.push({
-        id: i?._id,
-        email: i?.email,
-        createdAt: format(i?.createdAt),
-        source: i?.source,
-        status: i?.status,
-    })
-  })
+export const CustomerTable: React.FC<CustomerTableProps> = ({ data }) => {
+	const rows = data.map((i: any) => ({
+		id: i?._id,
+		email: i?.email,
+		createdAt: format(i?.createdAt),
+		source: i?.source,
+		status: i?.status,
+	}));
 
 	return (
 		<DataTable headers={EMAIL_MARKETING_HEADER}>
 			{rows.map((subscriber: any) => (
-				<TableRow key={subscriber._id}>
+				<TableRow key={subscriber.id}>
 					<TableCell>
 						<Card
 							className={cn(

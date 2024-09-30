@@ -126,7 +126,7 @@ export default function EmailMarketing({ campaign, subscription }: Props) {
 				<div className="grid gap-8 md:grid-cols-3">
 					<Card className="md:col-span-2">
 						<CardHeader>
-							<CardTitle>Dashboard Overview</CardTitle>
+							<CardTitle>Performance</CardTitle>
 						</CardHeader>
 						<CardContent>
 							<EmailOverviewCard />
