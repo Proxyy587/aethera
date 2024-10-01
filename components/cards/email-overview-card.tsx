@@ -1,6 +1,8 @@
 import { ArrowUp, Minus } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUser } from "@clerk/nextjs";
+import { getSubscriber } from "@/actions/get.stats";
 
 type StatProps = {
 	title: string;
@@ -34,11 +36,36 @@ const Stat: React.FC<StatProps> = ({ title, value, change, period }) => (
 );
 
 const EmailOverviewCard: React.FC = () => {
-	const stats = [
-		{ title: "Subscribers", value: 1, change: 50, period: "0 (last 4 weeks)" },
-		{ title: "Open Rate", value: 0, change: 0, period: "0 (last 4 weeks)" },
-		{ title: "Click Rate", value: 0, change: 0, period: "0 (last 4 weeks)" },
-	];
+	const [stats, setStats] = useState<StatProps[]>([
+		{ title: "Subscribers", value: 0, change: 0, period: "last week" },
+		{ title: "Open Rate", value: 0, change: 0, period: "last week" },
+		{ title: "Click Rate", value: 0, change: 0, period: "last week" },
+	]);
+	const { user } = useUser();
+
+	useEffect(() => {
+		const fetchData = async () => {
+			if (user) {
+				const subscribers = await getSubscriber({ newsLetterOwnerId: user?.username! });
+
+				const totalSubscribers = Object.values(subscribers).reduce((sum, count) => sum + count, 0);
+
+				// Calculate the change percentage
+				const lastWeekSubscribers = Object.values(subscribers).slice(-7).reduce((sum, count) => sum + count, 0);
+				const previousWeekSubscribers = Object.values(subscribers).slice(0, -7).reduce((sum, count) => sum + count, 0);
+				const change = previousWeekSubscribers > 0 
+					? ((lastWeekSubscribers - previousWeekSubscribers) / previousWeekSubscribers) * 100 
+					: 0;
+
+				setStats([
+					{ title: "Subscribers", value: totalSubscribers, change: Math.round(change), period: "last week" },
+					{ title: "Open Rate", value: 0, change: 0, period: "last week" },
+					{ title: "Click Rate", value: 0, change: 0, period: "last week" },
+				]);
+			}
+		};
+		fetchData();
+	}, [user]);
 
 	return (
 		<Card className="w-full">

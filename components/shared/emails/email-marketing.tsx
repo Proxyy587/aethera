@@ -4,9 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Plus } from "lucide-react";
 import Modal from "@/components/widgets/modal";
-import FormGenerator from "@/components/forms/form-generator";
 import { Icons } from "@/components/ui/icons";
-import { UseFormRegister, FieldValues } from "react-hook-form";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -143,7 +141,7 @@ export default function EmailMarketing({ campaign, subscription }: Props) {
 								onClick={handleCopyClick}
 							>
 								<small className="text-sm truncate copy-text mr-2">
-									{`${process.env.NEXT_PUBLIC_WEBSITE_URL}/subscribe?username=${user?.username}`.slice(
+									{`${user?.username}.${process.env.NEXT_PUBLIC_WEBSITE_URL}`.slice(
 										0,
 										32
 									) + "..."}

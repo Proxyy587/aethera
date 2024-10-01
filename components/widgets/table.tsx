@@ -23,7 +23,7 @@ export const DataTable = ({ headers, children }: DataTableProps) => {
 							key={key}
 							className={cn(
 								key == headers.length - 1 && "text-right",
-								"text-black"
+								"text-primary"
 							)}
 						>
 							{header}

@@ -55,7 +55,7 @@ export default function Form({
 					className="mt-2 w-full"
 					disabled={loading}
 				>
-					{loading ? "Loading..." : "Join Waitlist!"}
+					{loading ? "Loading..." : "Subscribe!"}
 				</EnhancedButton>
 			</motion.div>
 			<motion.div
@@ -64,7 +64,12 @@ export default function Form({
 			>
 				<p>
 					Trusted and protected by{" "}
-					<Link className="underline underline-offset-2 hover:text-accent-foreground transition-all" href="https://abhijee.com">aethera</Link>
+					<Link
+						className="underline underline-offset-2 hover:text-accent-foreground transition-all"
+						href="https://abhijee.com"
+					>
+						aethera
+					</Link>
 				</p>
 			</motion.div>
 		</motion.div>

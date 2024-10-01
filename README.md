@@ -10,6 +10,7 @@
 
 - [ ] Email Sending Functionality
 - [ ] Connecting Social Media
+- [ ] Credits System
 - [ ] DNS connect website to domain
 - [ ] Email Editor with AI
 

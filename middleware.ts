@@ -11,6 +11,8 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 	const hostname = req.headers
 		.get("host")!
 		.replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+		// undefined aa rha hai iski maa ka bhosda
+	console.log(process.env.NEXT_PUBLIC_ROOT_DOMAIN);
 
 	const searchParams = req.nextUrl.searchParams.toString();
 	const path = `${url.pathname}${
@@ -30,7 +32,7 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 		);
 	}
 
-	if (hostname === "abhijit.something.app") {
+	if (hostname === `ui.${process.env.NEXT_PUBLIC_WEBSITE_URL}`) {
 		return NextResponse.redirect("https://abhijit.com");
 	}
 

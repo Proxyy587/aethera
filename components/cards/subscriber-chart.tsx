@@ -1,20 +1,21 @@
 "use client"
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useUser } from "@clerk/nextjs"
+import { getSubscriber } from "@/actions/get.stats"
+interface ChartData {
+  date: string;
+  count: number;
+}
 
-const data = [
-  { month: "Jan", count: 2400 },
-  { month: "Feb", count: 1398 },
-  { month: "Mar", count: 9800 },
-  { month: "Apr", count: 3908 },
-  { month: "May", count: 4800 },
-  { month: "Jun", count: 3800 },
-  { month: "Jul", count: 4300 },
-]
-
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip: React.FC<{
+  active?: boolean;
+  payload?: Array<{ value: number }>;
+  label?: string;
+}> = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-background p-3 border rounded-lg shadow-lg">
@@ -27,27 +28,54 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 export default function SubscribersChart() {
+  const [period, setPeriod] = useState<"7" | "30" | "90">("7")
+  const [data, setData] = useState<ChartData[]>([])
+  const { user } = useUser()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        const subscribers = await getSubscriber({ newsLetterOwnerId: user.username!, period })
+
+        const formattedData: ChartData[] = Object.entries(subscribers).map(([date, count]) => ({
+          date,
+          count,
+        }))
+
+        setData(formattedData)
+      }
+    }
+    fetchData()
+  }, [user, period])
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-medium">Active Subscribers</CardTitle>
-        <div className="flex items-center">
-          <div className="w-2 h-2 rounded-full bg-primary mr-2" />
-          <span className="text-sm text-muted-foreground">Subscribers</span>
-        </div>
+        <CardTitle className="text-base font-medium">Subscribers Overview</CardTitle>
+        <Select onValueChange={(value: "7" | "30" | "90") => setPeriod(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select period" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="7">Past 7 Days</SelectItem>
+            <SelectItem value="30">Past 30 Days</SelectItem>
+            <SelectItem value="90">Past 90 Days</SelectItem>
+          </SelectContent>
+        </Select>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-6">Shows all active subscribers</p>
+        <p className="text-sm text-muted-foreground mb-6">Shows new subscribers for the selected period</p>
         <div className="h-[300px] sm:h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis 
-                dataKey="month" 
+                dataKey="date" 
                 stroke="#888888"
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
+                tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               />
               <YAxis
                 stroke="#888888"
