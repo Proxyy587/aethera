@@ -22,6 +22,13 @@ export default function SignUpPage() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [username, setUsername] = useState("");
 
+	const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		// subdomain regex
+		const sanitizedValue = value.replace(/[^a-z0-9-]/g, '').toLowerCase();
+		setUsername(sanitizedValue);
+	};
+
 	return (
 		<div className="grid w-full grow items-center px-4 sm:justify-center">
 			<SignUp.Root>
@@ -165,7 +172,7 @@ export default function SignUpPage() {
 									<CardHeader>
 										<CardTitle>Continue registration</CardTitle>
 										<CardDescription>
-											Your site URL will be created as {username}.{process.env.NEXT_PUBLIC_URL}
+											Your site URL will be created as<br/> <code>{username}.{process.env.NEXT_PUBLIC_ROOT_DOMAIN}</code>
 										</CardDescription>
 									</CardHeader>
 									<CardContent>
@@ -177,7 +184,8 @@ export default function SignUpPage() {
 												type="text" 
 												required 
 												asChild
-												onChange={(e) => setUsername(e.target.value)}
+												onChange={handleUsernameChange}
+												value={username}
 											>
 												<Input />
 											</Clerk.Input>

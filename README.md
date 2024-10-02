@@ -18,3 +18,7 @@
 
 - [ ] Chat Support Feedback
 - [ ] Custom Domain
+
+> Bugs
+
+- [ ] Fix the Warning: Only plain objects can be passed to Client Components from Server Components. Objects with toJSON methods

@@ -21,7 +21,7 @@ const Sidebar = () => {
 					href="/"
 					className="flex items-center gap-2 font-semibold transition-all duration-150 hover:text-primary"
 				>
-					<span className="text-xl hidden lg:inline">Aethera Toolkit</span>
+					<span className="text-xl hidden lg:inline transition-all">Aethera Toolkit</span>
 				</Link>
 			</div>
 			<nav className="flex-1 overflow-y-auto px-2 py-4">
@@ -76,7 +76,7 @@ const Sidebar = () => {
 									<AvatarImage src={user?.imageUrl} alt="user" />
 									<AvatarFallback>O</AvatarFallback>
 								</Avatar>
-								<span className="hidden lg:inline">Abhijit Bhattacharjee</span>
+								<span className="hidden lg:inline">{user?.fullName}</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-full">

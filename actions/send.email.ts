@@ -3,6 +3,8 @@
 import { connectToDB } from "@/lib/db";
 import { getSubscriber } from "./get.subscriber";
 import { Resend } from "resend";
+import { SentEmail } from "@/lib/schema/sent.email";
+import { useClerk } from "@clerk/nextjs";
 
 interface SendEmailProps {
 	ownerId: string;
@@ -64,6 +66,16 @@ export async function sendEmail({ ownerId, subject, body }: SendEmailProps) {
 			};
 		}
 
+		if (successCount > 0) {
+			// Store sent email details
+			await SentEmail.create({
+				ownerId,
+				subject,
+				sentTo: successCount,
+				status: errorCount === 0,
+			});
+		}
+
 		return {
 			success: true,
 			message: `Email sent to ${successCount} subscribers`,
@@ -74,5 +86,24 @@ export async function sendEmail({ ownerId, subject, body }: SendEmailProps) {
 			success: false,
 			message: "An unexpected error occurred",
 		};
+	}
+}
+
+export async function getRecentSentEmails(ownerId: string) {
+	try {
+        if (!ownerId) {
+            throw new Error("Unauthorized");
+        }
+		await connectToDB();
+		const recentEmails = await SentEmail.find({ ownerId: ownerId! })
+			.sort({ sentDate: -1 })
+			.limit(5)
+			.lean();
+
+        console.log(recentEmails)
+		return recentEmails;
+	} catch (error) {
+		console.error("Error fetching recent sent emails:", error);
+		return [];
 	}
 }
