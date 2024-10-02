@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware((auth, req: NextRequest) => {
@@ -10,19 +9,15 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 
 	const hostname = req.headers
 		.get("host")!
-		.replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
-		// undefined aa rha hai iski maa ka bhosda
-	console.log(process.env.NEXT_PUBLIC_ROOT_DOMAIN);
+		.replace(".localhost:3000", `.aethera.online`);
+	// undefined aa rha hai iski maa ka bhosda
 
 	const searchParams = req.nextUrl.searchParams.toString();
 	const path = `${url.pathname}${
 		searchParams.length > 0 ? `?${searchParams}` : ""
 	}`;
 
-	if (
-		hostname === "localhost:3000" ||
-		hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN
-	) {
+	if (hostname === "localhost:3000" || hostname === "aethera.online") {
 		if (isProtectedRoute(req)) {
 			auth().protect();
 		}
@@ -32,7 +27,7 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 		);
 	}
 
-	if (hostname === `ui.${process.env.NEXT_PUBLIC_WEBSITE_URL}`) {
+	if (hostname === `ui.aethera.online`) {
 		return NextResponse.redirect("https://abhijit.com");
 	}
 
