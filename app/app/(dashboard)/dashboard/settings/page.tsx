@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Eye, EyeOff, Moon, Sun, Laptop } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
+import Image from "next/image"
 
 const themes = [
   { name: "light", label: "Light", icon: Sun, image: "/light.svg" },
@@ -112,7 +113,7 @@ export default function SettingsPage() {
                     }`}
                     onClick={() => setTheme(themeOption.name)}
                   >
-                    <img src={themeOption.image} alt={themeOption.label} className="w-full h-auto" />
+                    <Image width={50} height={50} src={themeOption.image} alt={themeOption.label} className="w-full h-auto" />
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
                       <themeOption.icon className="w-8 h-8 text-white" />
                     </div>

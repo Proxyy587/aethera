@@ -50,13 +50,15 @@ export default function EmailMarketing({ subscription }: Props) {
 			try {
 				if (user?.username) {
 					const emails = await getRecentSentEmails(user.username);
-					setRecentEmails(emails.map(email => ({
-						_id: email._id as string,
-						subject: email.subject,
-						sentTo: email.sentTo,
-						sentDate: email.sentDate,
-						status: email.status
-					})));
+					setRecentEmails(
+						emails.map((email) => ({
+							_id: email._id as string,
+							subject: email.subject,
+							sentTo: email.sentTo,
+							sentDate: email.sentDate,
+							status: email.status,
+						}))
+					);
 				}
 			} catch (error) {
 				console.error("Error fetching recent emails:", error);
@@ -118,7 +120,7 @@ export default function EmailMarketing({ subscription }: Props) {
 					</span>
 				</h1>
 				<p className="text-muted-foreground">
-					Here's an overview of your email marketing performance.
+					Here&apos;s an overview of your email marketing performance.
 				</p>
 			</header>
 			<Separator className="mb-8" />
@@ -227,12 +229,15 @@ export default function EmailMarketing({ subscription }: Props) {
 														{new Date(email.sentDate).toLocaleDateString()}
 													</td>
 													<td className="py-3">
-
-                            <Badge className={`${
+														<Badge
+															className={`${
 																email.status
 																	? "bg-green-400 text-green-800"
 																	: "bg-red-400 text-red-800"
-															}`}>{email.status ? "Success" : "Failed"}</Badge>
+															}`}
+														>
+															{email.status ? "Success" : "Failed"}
+														</Badge>
 													</td>
 												</tr>
 											))}

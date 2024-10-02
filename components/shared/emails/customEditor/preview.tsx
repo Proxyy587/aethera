@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useState } from "react";
 
 interface ComponentStyle {
@@ -105,7 +106,9 @@ const PreviewWindow = ({
             style={selectedStyle} 
             onClick={onClickHandler}
           >
-            <img
+            <Image
+              width={400}
+              height={400}
               src={component.src || "https://via.placeholder.com/150"}
               alt={component.alt || "picture"}
               style={component.styles}
