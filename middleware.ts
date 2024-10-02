@@ -14,7 +14,6 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 		searchParams.length > 0 ? `?${searchParams}` : ""
 	}`;
 
-	// Handle aethera.online (main domain)
 	if (hostname === "aethera.online") {
 		if (isProtectedRoute(req)) {
 			auth().protect();
@@ -25,18 +24,15 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 		);
 	}
 
-	// Handle ui.aethera.online
 	if (hostname === `ui.aethera.online`) {
 		return NextResponse.redirect("https://abhijee.com");
 	}
 
-	// Handle subdomains of aethera.online
 	if (hostname.endsWith('.aethera.online') && hostname !== 'aethera.online') {
 		const subdomain = hostname.replace('.aethera.online', '');
 		return NextResponse.rewrite(new URL(`/${subdomain}${path}`, req.url));
 	}
 
-	// Handle localhost:3000 (main domain in local development)
 	if (hostname === "localhost:3000") {
 		if (isProtectedRoute(req)) {
 			auth().protect();
@@ -47,13 +43,11 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 		);
 	}
 
-	// Handle subdomains in local development
 	if (hostname.endsWith('.localhost:3000') && hostname !== 'localhost:3000') {
 		const subdomain = hostname.replace('.localhost:3000', '');
 		return NextResponse.rewrite(new URL(`/${subdomain}${path}`, req.url));
 	}
 
-	// Default case: rewrite to the dynamic route
 	return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
 });
 
