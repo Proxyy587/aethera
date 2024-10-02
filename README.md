@@ -12,6 +12,7 @@
 - [ ] Connecting Social Media
 - [ ] Credits System
 - [ ] DNS connect website to domain
+- [ ] Middleware was done very poorly, fix it
 - [ ] Email Editor with AI
 
 > Upcoming Features
