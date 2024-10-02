@@ -17,31 +17,30 @@ import Image from "next/image";
 
 export default async function Home() {
 	return (
-		<main>
+		<main className="space-y-20">
 			<NavBar />
-			<section>
-				<div className="flex items-center justify-center flex-col mt-[80px] gap-4 ">
-					<Badge className="rounded-full text-sm">
-						An AI powered sales assistant chatbot
-					</Badge>
-					<h1 className="text-5xl font-bold max-w-3xl text-center tracking-tight">
-						Effortlessly Grow your Product using the power of aethera
-					</h1>
-					<p className="text-center max-w-[500px] text-sm">
-						AI powered sales assistant for your website to help you generate
-						leads and run your business more efficiently.
-					</p>
-					<Button className="px-4 rounded-full">Start For Free</Button>
-					<Image
-						src="/screenshot.png"
-						alt="hero"
-						width={1000}
-						height={1000}
-						className="object-cover rounded-lg shadow-lg border border-accent animate-in fade-in-0 ease-in duration-300"
-					/>
-				</div>
+			<section className="flex flex-col items-center justify-center space-y-6 mt-20">
+				<Badge className="rounded-full text-sm">
+					An AI powered sales assistant chatbot
+				</Badge>
+				<h1 className="text-6xl font-bold max-w-4xl text-center tracking-tight">
+					Effortlessly Grow your Product with power of{" "}
+					<span className="text-primary">Aethera</span>
+				</h1>
+				<p className="text-center max-w-lg">
+					AI powered sales assistant for your website to help you generate
+					leads and run your business more efficiently.
+				</p>
+				<Button className="px-6 py-3 rounded-full">Start For Free</Button>
+				<Image
+					src="/screenshot.png"
+					alt="hero"
+					width={1000}
+					height={1000}
+					className="object-cover rounded-lg shadow-lg border border-accent animate-in fade-in-0 ease-in duration-300"
+				/>
 			</section>
-			<section className="flex justify-center items-center flex-col gap-4 mt-20">
+			<section className="flex flex-col items-center justify-center space-y-4">
 				<h2 className="text-3xl font-bold text-center tracking-tight">
 					Choose what fits you right
 				</h2>
@@ -49,7 +48,7 @@ export default async function Home() {
 					Our straightforward pricing plans are tailored to meet your needs.
 				</p>
 			</section>
-			<div className="flex  justify-center gap-4 flex-wrap mt-6 md:mt-12">
+			<div className="flex flex-wrap justify-center gap-6 mt-12">
 				{pricingCards.map((card) => (
 					<Card
 						key={card.title}
@@ -72,21 +71,19 @@ export default async function Home() {
 						<CardFooter className="flex flex-col items-start gap-4">
 							<div>
 								{card.features.map((feature) => (
-									<div key={feature} className="flex items-center justify-start gap-2">
+									<div
+										key={feature}
+										className="flex items-center justify-start gap-2"
+									>
 										<Check className="text-green-500 w-5 h-5 " />
 										<p>{feature}</p>
 									</div>
 								))}
 							</div>
-							<Link
-								href={`/dashbord?plan=${card.title}`}
-								className="w-full"
-							>
-							<Button
-								className="w-full text-center font-bold rounded-md"
-							>
-								Get Started
-							</Button>
+							<Link href={`/dashbord?plan=${card.title}`} className="w-full">
+								<Button className="w-full text-center font-bold rounded-md">
+									Get Started
+								</Button>
 							</Link>
 						</CardFooter>
 					</Card>

@@ -7,14 +7,14 @@ export default function LayoutRoot({
 	children: React.ReactNode;
 }) {
 	return (
-		<>
-			<div className="grid max-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-				<Sidebar />
-				<div className="flex flex-col flex-1">
-					<MobileSidebar />
-					<div className="flex-1 overflow-auto max-h-screen">{children}</div>
-				</div>
+		<div className="flex h-screen w-full overflow-hidden">
+			<Sidebar />
+			<div className="flex flex-col flex-grow">
+				<MobileSidebar />
+				<main className="flex-grow overflow-auto">
+					{children}
+				</main>
 			</div>
-		</>
+		</div>
 	);
 }

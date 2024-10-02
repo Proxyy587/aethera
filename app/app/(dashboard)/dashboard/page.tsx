@@ -133,7 +133,7 @@ export default function UserDashboard() {
 						</span>
 					</h1>
 					<p className="text-muted-foreground mt-1">
-						Here's your dashboard overview.
+						TODO: Sample dashboard overview will change alot after
 					</p>
 				</div>
 				<Button>Buy Credits</Button>
@@ -159,9 +159,9 @@ export default function UserDashboard() {
 								<Users className="h-4 w-4 text-primary" />
 							</CardHeader>
 							<CardContent>
-								<div className="text-2xl font-bold">18,549</div>
+								<div className="text-2xl font-bold">6,969</div>
 								<p className="text-xs text-muted-foreground">
-									+20.1% from last month
+									+6.9% from last month
 								</p>
 							</CardContent>
 						</Card>

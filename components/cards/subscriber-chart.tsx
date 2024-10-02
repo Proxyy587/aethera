@@ -68,7 +68,7 @@ export default function SubscribersChart() {
         <div className="h-[300px] sm:h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground))" />
               <XAxis 
                 dataKey="date" 
                 stroke="#888888"

@@ -20,7 +20,7 @@ const MobileSidebar = () => {
 	};
 
 	return (
-		<header className="sticky top-0 right-0 flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+		<header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 py-6">
 			<Sheet open={isOpen} onOpenChange={setIsOpen}>
 				<SheetTrigger asChild>
 					<Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -74,7 +74,7 @@ const MobileSidebar = () => {
 									className="w-8 h-8"
 								/>
 								<AvatarFallback>
-									<div className="w-8 h-8 rounded-full bg-red-300"></div>
+									<div className="w-8 h-8 rounded-full bg-accent"></div>
 								</AvatarFallback>
 							</Avatar>
 						</Button>
@@ -96,7 +96,7 @@ const MobileSidebar = () => {
 									</p>
 								</div>
 							</div>
-							<div className="mb-4 p-3 bg-primary/5 rounded-lg">
+							<div className="mb-4 p-3 bg-muted/20 rounded-lg">
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm font-medium">Credits Remaining</span>
 									<span className="text-sm font-semibold">
@@ -115,7 +115,7 @@ const MobileSidebar = () => {
 							<SignOutButton>
 								<Button
 									variant="ghost"
-									className={`w-full justify-start text-sm font-normal text-red-600 hover:text-red-700 bg-red-100 transition-all`}
+									className={`w-full justify-start text-sm font-normal text-red-600 hover:text-red-700 bg-red-500/10 transition-all`}
 								>
 									<LogOut className="mr-2 h-4 w-4" />
 									Logout
@@ -138,7 +138,7 @@ function PopoverMenuItem({ icon: Icon, label, variant = "default" }: any) {
 			className={`w-full justify-start text-sm font-normal ${
 				variant === "destructive"
 					? "text-red-600 hover:text-red-700 hover:bg-red-50"
-					: "hover:bg-gray-100"
+					: "hover:bg-muted"
 			}`}
 		>
 			<Icon className="mr-2 h-4 w-4" />

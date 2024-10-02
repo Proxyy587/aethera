@@ -177,8 +177,8 @@ export default function CreateCampaign() {
         </div>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="flex justify-between items-center p-4 bg-gray-50">
+      <div className="bg-accent/20 rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center p-4 bg-accent/50">
           <h2 className="text-lg font-semibold">Campaign List</h2>
           <Button
             variant="outline"
@@ -189,9 +189,9 @@ export default function CreateCampaign() {
           </Button>
         </div>
 
-        <ul className="divide-y divide-gray-200">
+        <ul className="divide-y divide-accent/80">
           {currentItems.map((campaign) => (
-            <li key={campaign._id} className="flex items-center justify-between p-4 hover:bg-gray-50">
+            <li key={campaign._id} className="flex items-center justify-between p-4 hover:bg-muted">
               <Link
                 href={`/dashboard/editor?subject=${encodeURIComponent(campaign.title)}&editor=${campaign.editorType}&id=${campaign._id}`}
                 className="text-lg font-medium hover:underline"

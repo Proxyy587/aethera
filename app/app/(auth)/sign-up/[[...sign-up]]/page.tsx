@@ -20,6 +20,7 @@ import Image from "next/image";
 
 export default function SignUpPage() {
 	const [showPassword, setShowPassword] = useState(false);
+	const [username, setUsername] = useState("");
 
 	return (
 		<div className="grid w-full grow items-center px-4 sm:justify-center">
@@ -163,13 +164,21 @@ export default function SignUpPage() {
 								<Card className="w-full sm:w-96">
 									<CardHeader>
 										<CardTitle>Continue registration</CardTitle>
+										<CardDescription>
+											Your site URL will be created as {username}.{process.env.NEXT_PUBLIC_URL}
+										</CardDescription>
 									</CardHeader>
 									<CardContent>
 										<Clerk.Field name="username" className="space-y-2">
 											<Clerk.Label>
 												<Label>Username</Label>
 											</Clerk.Label>
-											<Clerk.Input type="text" required asChild>
+											<Clerk.Input 
+												type="text" 
+												required 
+												asChild
+												onChange={(e) => setUsername(e.target.value)}
+											>
 												<Input />
 											</Clerk.Input>
 											<Clerk.FieldError className="block text-sm text-red-500" />

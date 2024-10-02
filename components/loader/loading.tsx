@@ -10,7 +10,7 @@ export const Spinner = ({ noPadding }: SpinnerProps) => {
 	return (
 		<div className={cn("w-full flex justify-center", noPadding ? "" : "py-10")}>
 			<div role="status">
-				<Icons.spinner className="w-8 h-8" />
+				<Icons.spinner className="w-8 h-8 animate-spin" />
 				<span className="sr-only">Loading...</span>
 			</div>
 		</div>

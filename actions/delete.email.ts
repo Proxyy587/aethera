@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { Campaign } from "@/lib/model";
+import Campaign from "@/lib/schema/marketing.schema";
 
 export const deleteEmail = async ({ emailId }: { emailId: string }) => {
 	try {
