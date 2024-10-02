@@ -9,7 +9,7 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 
 	const hostname = req.headers
 		.get("host")!
-		.replace(".localhost:3000", `.aethera.online`);
+		.replace(`.aethera.online`, ".localhost:3000");
 	// undefined aa rha hai iski maa ka bhosda
 
 	const searchParams = req.nextUrl.searchParams.toString();
@@ -28,7 +28,7 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 	}
 
 	if (hostname === `ui.aethera.online`) {
-		return NextResponse.redirect("https://abhijit.com");
+		return NextResponse.redirect("https://abhijee.com");
 	}
 
 	// `/[domain]/[slug] dynamic route`
