@@ -18,7 +18,7 @@ export default function Header() {
             variant="secondary"
             className="transition-all duration-150 ease-linear dark:md:hover:text-yellow-200">
             <FaGithub className="md:mr-1.5" />
-            <span className="hidden md:inline">Use this template</span>
+            <span className="hidden md:inline">Get this template</span>
           </Button>
         </Link>
       </motion.div>
