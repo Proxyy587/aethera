@@ -6,7 +6,8 @@ import { LayoutTransition } from "@/components/providers/layout-transition";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster as SonnerToaster } from "sonner";
-
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Plus_Jakarta_Sans({
 	weight: ["200", "300", "400", "500", "600", "700", "800"],
@@ -28,7 +29,7 @@ export default function RootLayout({
 		<ClerkProvider>
 			<html lang="en" suppressHydrationWarning>
 				<body className={inter.className}>
-					<ThemeProvider	
+					<ThemeProvider
 						attribute="class"
 						defaultTheme="system"
 						enableSystem
@@ -36,14 +37,16 @@ export default function RootLayout({
 					>
 						<LayoutTransition
 							initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-					>
-						{children}
-						<Toaster />
-						<SonnerToaster position="top-center" />
-					</LayoutTransition>
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+						>
+							{children}
+							<Toaster />
+							<SonnerToaster position="top-center" />
+						</LayoutTransition>
 					</ThemeProvider>
+					<Analytics />
+					<SpeedInsights />
 				</body>
 			</html>
 		</ClerkProvider>
