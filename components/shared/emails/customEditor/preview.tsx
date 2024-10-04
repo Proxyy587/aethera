@@ -1,19 +1,15 @@
-import Image from "next/image";
 import React, { useState } from "react";
-
-interface ComponentStyle {
-  [key: string]: string | number;
-}
+import Image from "next/image";
 
 interface ComponentProps {
   id: number;
   type: string;
-  styles: ComponentStyle;
-  content?: string | null;
-  href?: string | null;
+  styles: Record<string, string | number>;
+  content?: string;
+  src?: string;
+  alt?: string;
+  href?: string;
   targetBlank?: boolean;
-  src?: string | null;
-  alt?: string | null;
 }
 
 interface PreviewWindowProps {
@@ -24,13 +20,13 @@ interface PreviewWindowProps {
   duplicateComponent: (id: number) => void;
 }
 
-const PreviewWindow = ({
+const PreviewWindow: React.FC<PreviewWindowProps> = ({
   components,
   setSelectedComponent,
   updateComponent,
   deleteComponent,
   duplicateComponent,
-}: PreviewWindowProps) => {
+}) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const handleComponentClick = (component: ComponentProps) => {
@@ -49,41 +45,35 @@ const PreviewWindow = ({
       justifyContent: (component.styles.justifyContent as React.CSSProperties['justifyContent']) || "center",
     };
 
+    const componentStyle = {
+      ...component.styles,
+      boxSizing: 'border-box' as const,
+    };
+
     const onClickHandler = () => handleComponentClick(component);
 
     switch (component.type) {
       case "Heading":
+        const HeadingTag = `h${component.styles.level || 1}` as keyof JSX.IntrinsicElements;
         return (
-          <div 
-            key={component.id}
-            style={selectedStyle} 
-            onClick={onClickHandler}
-          >
-            <h1 style={component.styles}>{component.content}</h1>
+          <div key={component.id} style={selectedStyle} onClick={onClickHandler}>
+            <HeadingTag style={componentStyle}>{component.content}</HeadingTag>
           </div>
         );
       case "Text":
         return (
-          <div 
-            key={component.id}
-            style={selectedStyle} 
-            onClick={onClickHandler}
-          >
-            <p style={component.styles}>{component.content}</p>
+          <div key={component.id} style={selectedStyle} onClick={onClickHandler}>
+            <p style={componentStyle}>{component.content}</p>
           </div>
         );
       case "Button":
         return (
-          <div 
-            key={component.id}
-            style={selectedStyle}
-            onClick={onClickHandler}
-          >
+          <div key={component.id} style={selectedStyle} onClick={onClickHandler}>
             <a 
               href={component.href || "#"} 
               target={component.targetBlank ? "_blank" : "_self"}
               rel={component.targetBlank ? "noopener noreferrer" : undefined}
-              style={component.styles}
+              style={componentStyle}
             >
               {component.content}
             </a>
@@ -91,27 +81,17 @@ const PreviewWindow = ({
         );
       case "Divider":
         return (
-          <div 
-            key={component.id}
-            style={selectedStyle} 
-            onClick={onClickHandler}
-          >
-            <hr style={component.styles} />
+          <div key={component.id} style={selectedStyle} onClick={onClickHandler}>
+            <hr style={componentStyle} />
           </div>
         );
       case "Image":
         return (
-          <div 
-            key={component.id}
-            style={selectedStyle} 
-            onClick={onClickHandler}
-          >
-            <Image
-              width={400}
-              height={400}
+          <div key={component.id} style={selectedStyle} onClick={onClickHandler}>
+            <img
               src={component.src || "https://via.placeholder.com/150"}
               alt={component.alt || "picture"}
-              style={component.styles}
+              style={componentStyle}
             />
           </div>
         );

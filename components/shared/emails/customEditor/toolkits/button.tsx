@@ -6,72 +6,48 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
-interface ButtonToolkitProps {
-  component: any;
-  updateComponent: (id: number, updatedProps: object) => void;
+interface ComponentProperties {
+  id: number;
+  type: string;
+  styles: Record<string, string | number>;
+  content?: string;
+  href?: string;
+  targetBlank?: boolean;
 }
 
-export default function ButtonToolkit({
-  component,
-  updateComponent,
-}: ButtonToolkitProps) {
-  const [localStyles, setLocalStyles] = useState({
-    backgroundColor: "#007BFF",
-    color: "#FFFFFF",
-    width: "100%",
-    fontSize: "14px",
-    paddingTop: "10px",
-    paddingBottom: "10px",
-    justifyContent: "center",
-    ...component.styles,
-  });
+interface ButtonToolkitProps {
+  component: ComponentProperties;
+  updateComponent: (id: number, updatedProps: Partial<ComponentProperties>) => void;
+}
+
+export default function ButtonToolkit({ component, updateComponent }: ButtonToolkitProps) {
+  const [localStyles, setLocalStyles] = useState(component.styles);
   const [localContent, setLocalContent] = useState(component.content || "Button");
   const [localHref, setLocalHref] = useState(component.href || "#");
   const [localTargetBlank, setLocalTargetBlank] = useState(component.targetBlank || false);
 
   useEffect(() => {
-    setLocalStyles({
-      backgroundColor: "#007BFF",
-      color: "#FFFFFF",
-      width: "100%",
-      fontSize: "14px",
-      paddingTop: "10px",
-      paddingBottom: "10px",
-      justifyContent: "center",
-      ...component.styles,
-    });
+    setLocalStyles(component.styles);
     setLocalContent(component.content || "Button");
     setLocalHref(component.href || "#");
     setLocalTargetBlank(component.targetBlank || false);
-    updateComponent(component.id, {
-      styles: localStyles,
-      content: localContent,
-      href: localHref,
-      targetBlank: localTargetBlank,
-    });
   }, [component]);
 
+  const handleStyleChange = (field: string, value: string | number) => {
+    const updatedStyles = { ...component.styles, [field]: value };
+    updateComponent(component.id, { styles: updatedStyles });
+  };
+
   const handleContentChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setLocalContent(e.target.value);
     updateComponent(component.id, { content: e.target.value });
   };
 
   const handleHrefChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setLocalHref(e.target.value);
     updateComponent(component.id, { href: e.target.value });
   };
 
   const handleTargetBlankChange = (checked: boolean) => {
-    setLocalTargetBlank(checked);
     updateComponent(component.id, { targetBlank: checked });
-  };
-
-  const handleUpdateStyle = (field: string, value: any) => {
-    setLocalStyles((prevStyles: any) => {
-      const updatedStyles = { ...prevStyles, [field]: value };
-      updateComponent(component.id, { styles: updatedStyles });
-      return updatedStyles;
-    });
   };
 
   return (
@@ -113,8 +89,8 @@ export default function ButtonToolkit({
           <Input
             id="bgColor"
             type="color"
-            value={localStyles.backgroundColor}
-            onChange={(e) => handleUpdateStyle("backgroundColor", e.target.value)}
+            value={localStyles.backgroundColor as string}
+            onChange={(e) => handleStyleChange("backgroundColor", e.target.value)}
           />
         </div>
         <div className="flex-1">
@@ -122,8 +98,8 @@ export default function ButtonToolkit({
           <Input
             id="textColor"
             type="color"
-            value={localStyles.color}
-            onChange={(e) => handleUpdateStyle("color", e.target.value)}
+            value={localStyles.color as string}
+            onChange={(e) => handleStyleChange("color", e.target.value)}
           />
         </div>
       </div>
@@ -132,15 +108,15 @@ export default function ButtonToolkit({
         <Label htmlFor="alignment">Button Alignment</Label>
         <Select
           value={localStyles.justifyContent as string}
-          onValueChange={(value) => handleUpdateStyle("justifyContent", value)}
+          onValueChange={(value) => handleStyleChange("justifyContent", value)}
         >
           <SelectTrigger>
             <SelectValue placeholder="Choose alignment" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="start">Left</SelectItem>
+            <SelectItem value="flex-start">Left</SelectItem>
             <SelectItem value="center">Center</SelectItem>
-            <SelectItem value="end">Right</SelectItem>
+            <SelectItem value="flex-end">Right</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -152,7 +128,7 @@ export default function ButtonToolkit({
           max={100}
           step={1}
           value={[parseInt(localStyles.width as string) || 100]}
-          onValueChange={(value) => handleUpdateStyle("width", `${value[0]}%`)}
+          onValueChange={(value) => handleStyleChange("width", `${value[0]}%`)}
         />
         <span>{localStyles.width}</span>
       </div>
@@ -164,7 +140,7 @@ export default function ButtonToolkit({
           max={60}
           step={1}
           value={[parseInt(localStyles.fontSize as string) || 14]}
-          onValueChange={(value) => handleUpdateStyle("fontSize", `${value[0]}px`)}
+          onValueChange={(value) => handleStyleChange("fontSize", `${value[0]}px`)}
         />
         <span>{localStyles.fontSize}</span>
       </div>
@@ -177,8 +153,8 @@ export default function ButtonToolkit({
           step={1}
           value={[parseInt(localStyles.paddingTop as string) || 10]}
           onValueChange={(value) => {
-            handleUpdateStyle("paddingTop", `${value[0]}px`);
-            handleUpdateStyle("paddingBottom", `${value[0]}px`);
+            handleStyleChange("paddingTop", `${value[0]}px`);
+            handleStyleChange("paddingBottom", `${value[0]}px`);
           }}
         />
         <span>{localStyles.paddingTop}</span>

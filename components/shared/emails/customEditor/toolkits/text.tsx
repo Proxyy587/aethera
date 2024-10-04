@@ -6,26 +6,30 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import ReactMarkdown from 'react-markdown';
-import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-interface TextToolkitProps {
-  component: any;
-  updateComponent: (id: number, updatedProps: object) => void;
+interface ComponentProperties {
+  id: number;
+  type: string;
+  styles: Record<string, string | number>;
+  content?: string;
 }
 
-export default function TextToolkit({
-  component,
-  updateComponent,
-}: TextToolkitProps) {
-  const [localStyles, setLocalStyles] = useState(component.styles || {});
+interface TextToolkitProps {
+  component: ComponentProperties;
+  updateComponent: (id: number, updatedProps: Partial<ComponentProperties>) => void;
+}
+
+export default function TextToolkit({ component, updateComponent }: TextToolkitProps) {
+  const [localStyles, setLocalStyles] = useState(component.styles);
   const [localContent, setLocalContent] = useState(component.content || "");
 
   useEffect(() => {
-    setLocalStyles(component.styles || {});
+    setLocalStyles(component.styles);
     setLocalContent(component.content || "");
   }, [component]);
 
-  const handleUpdate = (field: string, value: any) => {
+  const handleStyleChange = (field: string, value: string | number) => {
     const updatedStyles = { ...localStyles, [field]: value };
     setLocalStyles(updatedStyles);
     updateComponent(component.id, { styles: updatedStyles });
@@ -70,10 +74,10 @@ export default function TextToolkit({
 
   return (
     <div className="space-y-4">
-      <h4 className="font-semibold text-lg">पाठ सेटिंग्स</h4>
+      <h4 className="font-semibold text-lg">Text Settings</h4>
 
       <div className="space-y-2">
-        <Label htmlFor="textContent">पाठ सामग्री</Label>
+        <Label htmlFor="textContent">Text Content</Label>
         <div className="flex space-x-2 mb-2">
           <Toggle onClick={() => toggleStyle('bold')}>B</Toggle>
           <Toggle onClick={() => toggleStyle('italic')}>I</Toggle>
@@ -92,13 +96,13 @@ export default function TextToolkit({
       </div>
 
       <div className="space-y-2">
-        <Label>फ़ॉन्ट आकार</Label>
+        <Label>Font Size</Label>
         <Slider
           min={8}
           max={60}
           step={1}
           value={[parseInt(localStyles.fontSize as string) || 14]}
-          onValueChange={(value) => handleUpdate("fontSize", `${value[0]}px`)}
+          onValueChange={(value) => handleStyleChange("fontSize", `${value[0]}px`)}
         />
         <span className="text-sm text-gray-500">
           {localStyles.fontSize || "14px"}
@@ -106,23 +110,23 @@ export default function TextToolkit({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="fontColor">फ़ॉन्ट रंग</Label>
+        <Label htmlFor="fontColor">Font Color</Label>
         <Input
           id="fontColor"
           type="color"
-          value={localStyles.color || "#000000"}
-          onChange={(e) => handleUpdate("color", e.target.value)}
+          value={localStyles.color as string || "#000000"}
+          onChange={(e) => handleStyleChange("color", e.target.value)}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="fontFamily">फ़ॉन्ट परिवार</Label>
+        <Label htmlFor="fontFamily">Font Family</Label>
         <Select
-          value={localStyles.fontFamily || "Arial"}
-          onValueChange={(value) => handleUpdate("fontFamily", value)}
+          value={localStyles.fontFamily as string || "Arial"}
+          onValueChange={(value) => handleStyleChange("fontFamily", value)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="फ़ॉन्ट परिवार चुनें" />
+            <SelectValue placeholder="Select font family" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Arial">Arial</SelectItem>
@@ -142,21 +146,59 @@ export default function TextToolkit({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="textAlign">पाठ संरेखण</Label>
+        <Label htmlFor="textAlign">Text Alignment</Label>
         <Select
-          value={localStyles.textAlign || "left"}
-          onValueChange={(value) => handleUpdate("textAlign", value)}
+          value={localStyles.textAlign as string || "left"}
+          onValueChange={(value) => handleStyleChange("textAlign", value)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="संरेखण चुनें" />
+            <SelectValue placeholder="Select alignment" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="left">बाएं</SelectItem>
-            <SelectItem value="center">केंद्र</SelectItem>
-            <SelectItem value="right">दाएं</SelectItem>
-            <SelectItem value="justify">समायोजित</SelectItem>
+            <SelectItem value="left">Left</SelectItem>
+            <SelectItem value="center">Center</SelectItem>
+            <SelectItem value="right">Right</SelectItem>
+            <SelectItem value="justify">Justify</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Line Height</Label>
+        <Slider
+          min={1}
+          max={3}
+          step={0.1}
+          value={[parseFloat(localStyles.lineHeight as string) || 1.5]}
+          onValueChange={(value) => handleStyleChange("lineHeight", value[0])}
+        />
+        <span className="text-sm text-gray-500">
+          {localStyles.lineHeight || "1.5"}
+        </span>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Letter Spacing</Label>
+        <Slider
+          min={-2}
+          max={10}
+          step={0.5}
+          value={[parseFloat(localStyles.letterSpacing as string) || 0]}
+          onValueChange={(value) => handleStyleChange("letterSpacing", `${value[0]}px`)}
+        />
+        <span className="text-sm text-gray-500">
+          {localStyles.letterSpacing || "0px"}
+        </span>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Text Transform</Label>
+        <ToggleGroup type="single" value={localStyles.textTransform as string || "none"} onValueChange={(value) => handleStyleChange("textTransform", value)}>
+          <ToggleGroupItem value="none">None</ToggleGroupItem>
+          <ToggleGroupItem value="uppercase">Upper</ToggleGroupItem>
+          <ToggleGroupItem value="lowercase">Lower</ToggleGroupItem>
+          <ToggleGroupItem value="capitalize">Cap</ToggleGroupItem>
+        </ToggleGroup>
       </div>
     </div>
   );

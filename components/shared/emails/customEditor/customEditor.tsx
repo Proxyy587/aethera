@@ -8,6 +8,7 @@ import DividerToolkit from "./toolkits/divider";
 import ImageToolkit from "./toolkits/image";
 import HeadingToolkit from "./toolkits/heading";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { debounce } from 'lodash';
 
 // Types for device modes and components
 type DeviceMode = "desktop" | "phone";
@@ -15,11 +16,12 @@ type DeviceMode = "desktop" | "phone";
 interface ComponentProperties {
 	id: number;
 	type: string;
-	styles: any;
-	content?: string | null;
-	src?: string | null;
-	alt?: string | null;
-	width?: number | null;
+	styles: Record<string, string | number>;
+	content?: string;
+	src?: string;
+	alt?: string;
+	href?: string;
+	targetBlank?: boolean;
 }
 
 export default function CustomEditor({
@@ -48,11 +50,11 @@ export default function CustomEditor({
 					? "Your Text Here"
 					: elementType === "Heading"
 					? "Heading"
-					: null,
-			src:
-				elementType === "Image" ? "https://via.placeholder.com/600x300" : null,
-			alt: elementType === "Image" ? "Image Description" : null,
-			width: elementType === "Image" ? 600 : null,
+					: undefined,
+			src: elementType === "Image" ? "https://via.placeholder.com/600x300" : undefined,
+			alt: elementType === "Image" ? "Image Description" : undefined,
+			href: elementType === "Button" ? "#" : undefined,
+			targetBlank: elementType === "Button" ? false : undefined,
 		};
 		setComponents((prev) => [...prev, newComponent]);
 	};
@@ -64,6 +66,10 @@ export default function CustomEditor({
 				prevComponents.map((component) =>
 					component.id === id ? { ...component, ...updatedProps } : component
 				)
+			);
+			// Update the selected component if it's the one being modified
+			setSelectedComponent((prev) =>
+				prev && prev.id === id ? { ...prev, ...updatedProps } : prev
 			);
 		},
 		[]
@@ -86,14 +92,14 @@ export default function CustomEditor({
 		}
 	};
 
-	const getStyleString = (styles: any) => {
+	const getStyleString = useCallback((styles: any) => {
 		return Object.entries(styles)
-			.map(
-				([key, value]) =>
-					`${key.replace(/([A-Z])/g, "-$1").toLowerCase()}: ${value}`
-			)
-			.join(";");
-	};
+			.map(([key, value]) => {
+				const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+				return `${cssKey}: ${value}`;
+			})
+			.join(';');
+	}, []);
 
 	const getEditorContent = useCallback(() => {
 		const htmlContent = components
@@ -107,7 +113,7 @@ export default function CustomEditor({
 					case "Text":
 						return `<p style="${styles}">${component.content}</p>`;
 					case "Button":
-						return `<button style="${styles}">${component.content}</button>`;
+						return `<a href="${component.href || '#'}" target="${component.targetBlank ? '_blank' : '_self'}" rel="${component.targetBlank ? 'noopener noreferrer' : ''}" style="${styles}">${component.content}</a>`;
 					case "Divider":
 						return `<hr style="${styles}" />`;
 					case "Image":
@@ -253,7 +259,6 @@ export default function CustomEditor({
 
 	return (
 		<div className="h-screen p-4 flex bg-gray-100">
-			{/* Main content area */}
 			<div className="w-3/5 p-4 bg-white border rounded-lg shadow-lg mr-4">
 				<ResponsiveToggle device={device} setDevice={setDevice} />
 				<ScrollArea className="w-full h-[calc(100vh-180px)]">
@@ -267,11 +272,9 @@ export default function CustomEditor({
 				</ScrollArea>
 			</div>
 
-			{/* Editor toolbar & toolkit */}
 			<div className="w-2/5 bg-white p-4 rounded-lg shadow-lg flex flex-col">
 				<Toolbar addComponent={addComponent} />
 				<ScrollArea className="flex-grow mt-4">
-					{/* Render toolkits conditionally based on the selected component */}
 					{selectedComponent && (
 						<div className="p-4 bg-gray-50 rounded-lg">
 							{selectedComponent.type === "Button" && (

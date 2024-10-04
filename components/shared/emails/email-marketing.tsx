@@ -174,23 +174,55 @@ export default function EmailMarketing({ subscription }: Props) {
 					</Card>
 					<Card>
 						<CardHeader>
-							<CardTitle>Subscription</CardTitle>
-							<CardDescription>Your current plan and usage</CardDescription>
+							<CardTitle>Resources</CardTitle>
+							<CardDescription>Helpful links and tools</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							<div className="flex justify-between items-center">
-								<span className="font-medium">Plan</span>
-								<span className="text-primary font-semibold">
-									{subscription?.plan || "FREE"}
-								</span>
+							<div>
+								<h4 className="font-medium mb-2">Your Subscription Page</h4>
+								<div
+									className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
+									onClick={handleCopyClick}
+								>
+									<span className="text-sm truncate mr-2">
+										{`${user?.username}.${process.env.NEXT_PUBLIC_WEBSITE_URL}`.slice(
+											0,
+											32
+										)}
+										...
+									</span>
+									<Button variant="outline" size="icon">
+										<Copy className="h-4 w-4" />
+									</Button>
+								</div>
+								<Button
+									className="w-full mt-2"
+									variant="outline"
+									onClick={handleViewSite}
+								>
+									<ExternalLink className="mr-2 h-4 w-4" /> View Site
+								</Button>
 							</div>
-							<div className="flex justify-between items-center">
-								<span className="font-medium">Credits</span>
-								<span>{subscription?.credits || 0} remaining</span>
+							<div className="space-y-2">
+								<h4 className="font-medium">Helpful Links</h4>
+								<ul className="space-y-1">
+									<li>
+										<Button variant="link" className="p-0 h-auto">
+											Email Marketing Best Practices
+										</Button>
+									</li>
+									<li>
+										<Button variant="link" className="p-0 h-auto">
+											Campaign Analytics Guide
+										</Button>
+									</li>
+									<li>
+										<Button variant="link" className="p-0 h-auto">
+											Subscriber Management Tips
+										</Button>
+									</li>
+								</ul>
 							</div>
-							<Button className="w-full" variant="outline">
-								Upgrade Plan
-							</Button>
 						</CardContent>
 					</Card>
 				</div>
@@ -251,55 +283,23 @@ export default function EmailMarketing({ subscription }: Props) {
 					</Card>
 					<Card>
 						<CardHeader>
-							<CardTitle>Resources</CardTitle>
-							<CardDescription>Helpful links and tools</CardDescription>
+							<CardTitle>Subscription</CardTitle>
+							<CardDescription>Your current plan and usage</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							<div>
-								<h4 className="font-medium mb-2">Your Subscription Page</h4>
-								<div
-									className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
-									onClick={handleCopyClick}
-								>
-									<span className="text-sm truncate mr-2">
-										{`${user?.username}.${process.env.NEXT_PUBLIC_WEBSITE_URL}`.slice(
-											0,
-											32
-										)}
-										...
-									</span>
-									<Button variant="outline" size="icon">
-										<Copy className="h-4 w-4" />
-									</Button>
-								</div>
-								<Button
-									className="w-full mt-2"
-									variant="outline"
-									onClick={handleViewSite}
-								>
-									<ExternalLink className="mr-2 h-4 w-4" /> View Site
-								</Button>
+							<div className="flex justify-between items-center">
+								<span className="font-medium">Plan</span>
+								<span className="text-primary font-semibold">
+									{subscription?.plan || "FREE"}
+								</span>
 							</div>
-							<div className="space-y-2">
-								<h4 className="font-medium">Helpful Links</h4>
-								<ul className="space-y-1">
-									<li>
-										<Button variant="link" className="p-0 h-auto">
-											Email Marketing Best Practices
-										</Button>
-									</li>
-									<li>
-										<Button variant="link" className="p-0 h-auto">
-											Campaign Analytics Guide
-										</Button>
-									</li>
-									<li>
-										<Button variant="link" className="p-0 h-auto">
-											Subscriber Management Tips
-										</Button>
-									</li>
-								</ul>
+							<div className="flex justify-between items-center">
+								<span className="font-medium">Credits</span>
+								<span>{subscription?.credits || 0} remaining</span>
 							</div>
+							<Button className="w-full" variant="outline">
+								Upgrade Plan
+							</Button>
 						</CardContent>
 					</Card>
 				</div>
